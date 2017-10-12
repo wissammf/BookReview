@@ -19,16 +19,20 @@ import se.chalmers.bookreview.model.Book;
 public class BookAdapter extends RecyclerView.Adapter<BookAdapter.BookViewHolder> {
     private Context context;
     private ArrayList<Book> books;
+    private View.OnClickListener onClickListener;
 
-    public BookAdapter(Context context, ArrayList<Book> books) {
+    public BookAdapter(Context context, ArrayList<Book> books, View.OnClickListener onClickListener) {
         this.context = context;
         this.books = books;
+        this.onClickListener = onClickListener;
     }
 
     @Override
     public BookViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View itemView = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.item_book, parent, false);
+
+        itemView.setOnClickListener(onClickListener);
 
         return new BookViewHolder(itemView);
     }
@@ -47,14 +51,14 @@ public class BookAdapter extends RecyclerView.Adapter<BookAdapter.BookViewHolder
     public class BookViewHolder extends RecyclerView.ViewHolder {
         private ImageView ivCover;
         private TextView tvTitle;
-        private RatingBar rbUserRatings;
+        private RatingBar rbAverageRating;
 
         public BookViewHolder(View itemView) {
             super(itemView);
 
             ivCover = itemView.findViewById(R.id.iv_cover);
             tvTitle = itemView.findViewById(R.id.tv_title);
-            rbUserRatings = itemView.findViewById(R.id.rb_user_ratings);
+            rbAverageRating = itemView.findViewById(R.id.rb_average_rating);
         }
 
         public void setupView(String coverImageUrl, String title, float rating) {
@@ -64,7 +68,7 @@ public class BookAdapter extends RecyclerView.Adapter<BookAdapter.BookViewHolder
                     .error(R.drawable.book_cover_unavailable)
                     .into(ivCover);
             tvTitle.setText(title);
-            rbUserRatings.setRating(rating);
+            rbAverageRating.setRating(rating);
         }
     }
 }
