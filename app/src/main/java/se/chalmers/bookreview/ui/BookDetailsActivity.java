@@ -18,6 +18,7 @@ import java.util.ArrayList;
 
 import se.chalmers.bookreview.R;
 import se.chalmers.bookreview.adapter.ReviewAdapter;
+import se.chalmers.bookreview.data.WebRequestManager;
 import se.chalmers.bookreview.model.Book;
 import se.chalmers.bookreview.model.BookReview;
 import se.chalmers.bookreview.model.Language;
@@ -56,21 +57,36 @@ public class BookDetailsActivity extends AppCompatActivity implements View.OnCli
         tvDescription.setText(book.getDescription());
         rbAverageRating.setRating(book.getRating());
 
-        // TODO: Get from server
         // Show reviews
         mReviews = new ArrayList<>();
-        mReviews.add(new BookReview(2.5f, new Language(1, "English"), "1 Lorem ipsum dolor sit amet, ad rebum illum splendide per, eu mea accusamus concludaturque. Est novum recusabo philosophia ea, constituam accommodare ullamcorper ea pro, lorem detracto et est. Iriure placerat ei vim, qui suas gubergren adolescens ea. At minim primis mediocrem eos, et novum putent noster vim.\n" +
+        /*mReviews.add(new BookReview(2.5f, new Language(1, "English"), "1 Lorem ipsum dolor sit amet, ad rebum illum splendide per, eu mea accusamus concludaturque. Est novum recusabo philosophia ea, constituam accommodare ullamcorper ea pro, lorem detracto et est. Iriure placerat ei vim, qui suas gubergren adolescens ea. At minim primis mediocrem eos, et novum putent noster vim.\n" +
                 "Eu his euismod detracto, at cibo petentium corrumpit pri. Amet putant deserunt ut eum. An vix modus expetenda, oblique epicuri disputationi cum at. An has consul imperdiet democritum, ut vis appetere indoctum. Cu his dicta pertinax vulputate, ex clita aliquip officiis vim, sea hinc numquam et."));
         mReviews.add(new BookReview(4f, new Language(2, "Swedish"), "2 Lorem ipsum dolor sit amet, ad rebum illum splendide per, eu mea accusamus concludaturque. Est novum recusabo philosophia ea, constituam accommodare ullamcorper ea pro, lorem detracto et est. Iriure placerat ei vim, qui suas gubergren adolescens ea. At minim primis mediocrem eos, et novum putent noster vim.\n" +
                 "Eu his euismod detracto, at cibo petentium corrumpit pri. Amet putant deserunt ut eum. An vix modus expetenda, oblique epicuri disputationi cum at. An has consul imperdiet democritum, ut vis appetere indoctum. Cu his dicta pertinax vulputate, ex clita aliquip officiis vim, sea hinc numquam et."));
         mReviews.add(new BookReview(1.5f, new Language(1, "English"), "3 Lorem ipsum dolor sit amet, ad rebum illum splendide per, eu mea accusamus concludaturque. Est novum recusabo philosophia ea, constituam accommodare ullamcorper ea pro, lorem detracto et est. Iriure placerat ei vim, qui suas gubergren adolescens ea. At minim primis mediocrem eos, et novum putent noster vim.\n" +
                 "Eu his euismod detracto, at cibo petentium corrumpit pri. Amet putant deserunt ut eum. An vix modus expetenda, oblique epicuri disputationi cum at. An has consul imperdiet democritum, ut vis appetere indoctum. Cu his dicta pertinax vulputate, ex clita aliquip officiis vim, sea hinc numquam et."));
         mReviews.add(new BookReview(5f, new Language(3, "French"), "4 Lorem ipsum dolor sit amet, ad rebum illum splendide per, eu mea accusamus concludaturque. Est novum recusabo philosophia ea, constituam accommodare ullamcorper ea pro, lorem detracto et est. Iriure placerat ei vim, qui suas gubergren adolescens ea. At minim primis mediocrem eos, et novum putent noster vim.\n" +
-                "Eu his euismod detracto, at cibo petentium corrumpit pri. Amet putant deserunt ut eum. An vix modus expetenda, oblique epicuri disputationi cum at. An has consul imperdiet democritum, ut vis appetere indoctum. Cu his dicta pertinax vulputate, ex clita aliquip officiis vim, sea hinc numquam et."));
+                "Eu his euismod detracto, at cibo petentium corrumpit pri. Amet putant deserunt ut eum. An vix modus expetenda, oblique epicuri disputationi cum at. An has consul imperdiet democritum, ut vis appetere indoctum. Cu his dicta pertinax vulputate, ex clita aliquip officiis vim, sea hinc numquam et."));*/
 
         mAdapter = new ReviewAdapter(mReviews, this);
         mRvReviews.setAdapter(mAdapter);
         mRvReviews.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
+
+        // Get reviews from server
+        WebRequestManager.getInstance().getBookReviews(book.getId(), new WebRequestManager.WebRequestHandler() {
+            @Override
+            public void onSuccess(Object data) {
+                //noinspection unchecked
+                mReviews = (ArrayList<BookReview>) data;
+
+                mAdapter.updateData(mReviews);
+            }
+
+            @Override
+            public void onFailure() {
+                Toast.makeText(BookDetailsActivity.this, R.string.error_get_reviews, Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
     @Override

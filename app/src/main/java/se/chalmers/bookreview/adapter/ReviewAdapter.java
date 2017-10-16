@@ -45,6 +45,15 @@ public class ReviewAdapter extends RecyclerView.Adapter<ReviewAdapter.ReviewView
         return reviews.size();
     }
 
+    public void updateData(ArrayList<BookReview> reviews) {
+        if (reviews == null) return;
+
+        this.reviews.clear();
+        this.reviews.addAll(reviews);
+
+        notifyDataSetChanged();
+    }
+
     public class ReviewViewHolder extends RecyclerView.ViewHolder {
         private RatingBar rbRating;
         private TextView tvLanguage;

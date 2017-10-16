@@ -27,6 +27,15 @@ public class BookAdapter extends RecyclerView.Adapter<BookAdapter.BookViewHolder
         this.onClickListener = onClickListener;
     }
 
+    public void updateData(ArrayList<Book> books) {
+        if (books == null) return;
+
+        this.books.clear();
+        this.books.addAll(books);
+
+        notifyDataSetChanged();
+    }
+
     @Override
     public BookViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View itemView = LayoutInflater.from(parent.getContext())
