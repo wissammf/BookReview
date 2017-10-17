@@ -1,4 +1,4 @@
-package se.chalmers.bookreview.data;
+package se.chalmers.bookreview.net;
 
 import android.content.Context;
 
@@ -7,6 +7,7 @@ import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
+import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 
 import org.json.JSONArray;
@@ -123,6 +124,34 @@ public class WebRequestManager {
                 }
             }
         });
+        requestQueue.add(request);
+    }
+
+    public void getNewReviewCode(int bookId, final WebRequestHandler requestHandler) {
+        JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, UrlBuilder.getNewReviewCodeUrl(bookId), null,
+                new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        String code = null;
+                        try {
+                            code = response.getString("code");
+
+                            if (requestHandler != null) {
+                                requestHandler.onSuccess(code);
+                            }
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        if (requestHandler != null) {
+                            requestHandler.onFailure();
+                        }
+                    }
+                });
         requestQueue.add(request);
     }
 

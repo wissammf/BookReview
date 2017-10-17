@@ -1,4 +1,4 @@
-package se.chalmers.bookreview.data;
+package se.chalmers.bookreview.net;
 
 /**
  * Created by Wissam on 2017-10-16.

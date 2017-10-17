@@ -3,4 +3,7 @@
     <string name="book_item_image_desc">Book cover</string>
     <string name="error_get_books">Error retrieving data from server!</string>
     <string name="error_get_reviews">Error retrieving data from server!</string>
+    <string name="action_filter">Filter</string>
+    <string name="action_add_review">Add Review</string>
+    <string name="error_server">Server error!</string>
 </resources>

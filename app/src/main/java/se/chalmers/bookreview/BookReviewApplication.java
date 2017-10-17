@@ -2,7 +2,7 @@ package se.chalmers.bookreview;
 
 import android.app.Application;
 
-import se.chalmers.bookreview.data.WebRequestManager;
+import se.chalmers.bookreview.net.WebRequestManager;
 
 public class BookReviewApplication extends Application {
     @Override

@@ -1,4 +1,4 @@
-package se.chalmers.bookreview.data;
+package se.chalmers.bookreview.net;
 
 public class UrlBuilder {
     private static final String SERVER_URL = "http://185.47.129.233:3000";
@@ -9,5 +9,9 @@ public class UrlBuilder {
 
     public static String getBookReviewsUrl(int bookId) {
         return SERVER_URL + "/getReviews?book=" + bookId;
+    }
+
+    public static String getNewReviewCodeUrl(int bookId) {
+        return SERVER_URL + "/getNewReviewCode?book=" + bookId;
     }
 }
