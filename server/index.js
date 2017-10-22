@@ -191,8 +191,9 @@ function login(user,callback){
         else if(results[0]){
             if(bcrypt.compareSync(user.password,results[0].hash)){
                 callback(err,{error:0,id:results[0].id,jwt:jsonwebtoken.sign({username:user.username,password:user.password},"Mobile123")})
+            }else{
+                callback(err,{error:1,id:undefined,jwt:undefined});
             }
-            callback(err,{error:1,id:undefined,jwt:undefined});
         }else callback(err,{error:2,id:undefined,jwt:undefined})
     })
 }
