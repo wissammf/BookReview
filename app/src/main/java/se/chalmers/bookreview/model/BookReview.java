@@ -5,7 +5,6 @@ public class BookReview {
     private float rating;
     private String text;
     private String reviewDate;
-    private Language language;
 
     public int getId() {
         return id;
@@ -37,13 +36,5 @@ public class BookReview {
 
     public void setReviewDate(String reviewDate) {
         this.reviewDate = reviewDate;
-    }
-
-    public Language getLanguage() {
-        return language;
-    }
-
-    public void setLanguage(Language language) {
-        this.language = language;
     }
 }

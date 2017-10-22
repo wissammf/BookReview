@@ -1,13 +1,13 @@
 package se.chalmers.bookreview.net;
 
 import android.content.Context;
+import android.util.Log;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
-import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 
 import org.json.JSONArray;
@@ -18,7 +18,6 @@ import java.util.ArrayList;
 
 import se.chalmers.bookreview.model.Book;
 import se.chalmers.bookreview.model.BookReview;
-import se.chalmers.bookreview.model.Language;
 
 public class WebRequestManager {
     private static WebRequestManager instance;
@@ -62,7 +61,7 @@ public class WebRequestManager {
                                 book.setCoverImageUrl(bookObject.getString("cover_src"));
                                 book.setRating((float) bookObject.getDouble("rate"));
                                 book.setIsbn(bookObject.getString("isbn"));
-                                book.setDescription(bookObject.getString("description"));
+                                //book.setDescription(bookObject.getString("description"));
 
                                 books.add(book);
                             }
@@ -104,7 +103,6 @@ public class WebRequestManager {
                                 bookReview.setRating((float) bookReviewObject.getDouble("rate"));
                                 bookReview.setText(bookReviewObject.getString("comment"));
                                 bookReview.setReviewDate(bookReviewObject.getString("date_of_review"));
-                                bookReview.setLanguage(new Language(bookReviewObject.getInt("language_id"), bookReviewObject.getString("language_name")));
 
                                 bookReviews.add(bookReview);
                             }
@@ -124,34 +122,6 @@ public class WebRequestManager {
                 }
             }
         });
-        requestQueue.add(request);
-    }
-
-    public void getNewReviewCode(int bookId, final WebRequestHandler requestHandler) {
-        JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, UrlBuilder.getNewReviewCodeUrl(bookId), null,
-                new Response.Listener<JSONObject>() {
-                    @Override
-                    public void onResponse(JSONObject response) {
-                        String code = null;
-                        try {
-                            code = response.getString("code");
-
-                            if (requestHandler != null) {
-                                requestHandler.onSuccess(code);
-                            }
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                },
-                new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        if (requestHandler != null) {
-                            requestHandler.onFailure();
-                        }
-                    }
-                });
         requestQueue.add(request);
     }
 

@@ -10,8 +10,4 @@ public class UrlBuilder {
     public static String getBookReviewsUrl(int bookId) {
         return SERVER_URL + "/getReviews?book=" + bookId;
     }
-
-    public static String getNewReviewCodeUrl(int bookId) {
-        return SERVER_URL + "/getNewReviewCode?book=" + bookId;
-    }
 }

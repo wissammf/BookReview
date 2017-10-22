@@ -10,7 +10,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.Toast;
 
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.WriterException;
@@ -18,20 +17,21 @@ import com.google.zxing.common.BitMatrix;
 import com.google.zxing.qrcode.QRCodeWriter;
 
 import se.chalmers.bookreview.R;
-import se.chalmers.bookreview.net.WebRequestManager;
 
-public class AddReviewDialogFragment extends DialogFragment implements WebRequestManager.WebRequestHandler {
+public class AddReviewDialogFragment extends DialogFragment {
     private static final String BOOK_ID_KEY = "BOOK_ID";
-
-    private ImageView mIvQrCode;
+    private static final String BOOK_TITLE_KEY = "BOOK_TITLE_KEY";
 
     private int mBookId;
+    private String mBookTitle;
+    private Bitmap mQrCode;
 
-    public static AddReviewDialogFragment newInstance(int bookId) {
+    public static AddReviewDialogFragment newInstance(int bookId, String bookTitle) {
         AddReviewDialogFragment f = new AddReviewDialogFragment();
 
         Bundle args = new Bundle();
         args.putInt(BOOK_ID_KEY, bookId);
+        args.putString(BOOK_TITLE_KEY, bookTitle);
         f.setArguments(args);
 
         return f;
@@ -42,6 +42,9 @@ public class AddReviewDialogFragment extends DialogFragment implements WebReques
         super.onCreate(savedInstanceState);
 
         mBookId = getArguments().getInt(BOOK_ID_KEY);
+        mBookTitle = getArguments().getString(BOOK_TITLE_KEY);
+
+        createQrCode();
     }
 
     @Nullable
@@ -49,7 +52,8 @@ public class AddReviewDialogFragment extends DialogFragment implements WebReques
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_add_review_dialog, container, false);
 
-        mIvQrCode = rootView.findViewById(R.id.iv_qr_code);
+        ImageView ivQrCode = rootView.findViewById(R.id.iv_qr_code);
+        ivQrCode.setImageBitmap(mQrCode);
 
         Button btnCancel = rootView.findViewById(R.id.btn_cancel);
         btnCancel.setOnClickListener(new View.OnClickListener() {
@@ -59,14 +63,11 @@ public class AddReviewDialogFragment extends DialogFragment implements WebReques
             }
         });
 
-        WebRequestManager.getInstance().getNewReviewCode(mBookId, this);
-
         return rootView;
     }
 
-    @Override
-    public void onSuccess(Object data) {
-        String qrCode = (String) data;
+    public void createQrCode() {
+        String qrCode = String.format("%s@%s", String.valueOf(mBookId), mBookTitle);
         QRCodeWriter writer = new QRCodeWriter();
         try {
             BitMatrix bitMatrix = writer.encode(qrCode, BarcodeFormat.QR_CODE, 512, 512);
@@ -78,16 +79,10 @@ public class AddReviewDialogFragment extends DialogFragment implements WebReques
                     bmp.setPixel(x, y, bitMatrix.get(x, y) ? Color.BLACK : Color.WHITE);
                 }
             }
-            mIvQrCode.setImageBitmap(bmp);
+            mQrCode = bmp;
 
         } catch (WriterException e) {
             e.printStackTrace();
         }
-    }
-
-    @Override
-    public void onFailure() {
-        dismiss();
-        Toast.makeText(getContext(), R.string.error_server, Toast.LENGTH_SHORT).show();
     }
 }

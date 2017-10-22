@@ -4,11 +4,8 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.RatingBar;
 import android.widget.TextView;
-
-import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 
@@ -37,7 +34,7 @@ public class ReviewAdapter extends RecyclerView.Adapter<ReviewAdapter.ReviewView
     @Override
     public void onBindViewHolder(ReviewViewHolder holder, int position) {
         BookReview review = reviews.get(position);
-        holder.setupView(review.getRating(), review.getLanguage().getName(), review.getText());
+        holder.setupView(review.getRating(), review.getText());
     }
 
     @Override
@@ -56,20 +53,17 @@ public class ReviewAdapter extends RecyclerView.Adapter<ReviewAdapter.ReviewView
 
     public class ReviewViewHolder extends RecyclerView.ViewHolder {
         private RatingBar rbRating;
-        private TextView tvLanguage;
         private TextView tvText;
 
         public ReviewViewHolder(View itemView) {
             super(itemView);
 
             rbRating = itemView.findViewById(R.id.rb_rating);
-            tvLanguage = itemView.findViewById(R.id.tv_language);
             tvText = itemView.findViewById(R.id.tv_text);
         }
 
-        public void setupView(float rating, String language, String text) {
+        public void setupView(float rating, String text) {
             rbRating.setRating(rating);
-            tvLanguage.setText(language);
             tvText.setText(text);
         }
     }

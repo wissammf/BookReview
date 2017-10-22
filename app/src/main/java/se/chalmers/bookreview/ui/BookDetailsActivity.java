@@ -1,12 +1,17 @@
 package se.chalmers.bookreview.ui;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
+import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
@@ -20,9 +25,9 @@ import java.util.ArrayList;
 
 import se.chalmers.bookreview.R;
 import se.chalmers.bookreview.adapter.ReviewAdapter;
-import se.chalmers.bookreview.net.WebRequestManager;
 import se.chalmers.bookreview.model.Book;
 import se.chalmers.bookreview.model.BookReview;
+import se.chalmers.bookreview.net.WebRequestManager;
 
 public class BookDetailsActivity extends AppCompatActivity implements View.OnClickListener {
     private static final String ADD_REVIEW_DIALOG_FRAGMENT_TAG = "BookDetailsActivity_ADD_REVIEW_DIALOG_FRAGMENT_TAG";
@@ -31,6 +36,24 @@ public class BookDetailsActivity extends AppCompatActivity implements View.OnCli
     private ReviewAdapter mAdapter;
     private Book mBook;
     private ArrayList<BookReview> mReviews;
+    private AddReviewDialogFragment mDialogFragment;
+
+    // Handle broadcast to refresh review list
+    private BroadcastReceiver mRefreshReviewListReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            String bookId = intent.getStringExtra(BookDetailsActivity.this.getString(R.string.key_book_id));
+
+            if (bookId.equals(String.valueOf(mBook.getId()))) {
+                if (mDialogFragment != null) {
+                    mDialogFragment.dismiss();
+                }
+
+                // Get reviews from server
+                GetReviewsFromServer();
+            }
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -72,6 +95,10 @@ public class BookDetailsActivity extends AppCompatActivity implements View.OnCli
         mRvReviews.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
 
         // Get reviews from server
+        GetReviewsFromServer();
+    }
+
+    private void GetReviewsFromServer() {
         WebRequestManager.getInstance().getBookReviews(mBook.getId(), new WebRequestManager.WebRequestHandler() {
             @Override
             public void onSuccess(Object data) {
@@ -89,6 +116,29 @@ public class BookDetailsActivity extends AppCompatActivity implements View.OnCli
     }
 
     @Override
+    protected void onResume() {
+        super.onResume();
+
+        // Register broadcast receiver
+        registerReceiver(mRefreshReviewListReceiver, new IntentFilter(getString(R.string.action_refresh_book_reviews)));
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+
+        // Unregister broadcast receiver
+        unregisterReceiver(mRefreshReviewListReceiver);
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.menu_book_details, menu);
+        return true;
+    }
+
+    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
 
@@ -100,8 +150,8 @@ public class BookDetailsActivity extends AppCompatActivity implements View.OnCli
 
         if (id == R.id.action_add_review) {
             FragmentManager fm = getSupportFragmentManager();
-            AddReviewDialogFragment dialogFragment = AddReviewDialogFragment.newInstance(mBook.getId());
-            dialogFragment.show(fm, "testing");
+            mDialogFragment = AddReviewDialogFragment.newInstance(mBook.getId(), mBook.getTitle());
+            mDialogFragment.show(fm, "tag");
 
             return true;
         }
@@ -111,8 +161,5 @@ public class BookDetailsActivity extends AppCompatActivity implements View.OnCli
 
     @Override
     public void onClick(View view) {
-        BookReview clickedBookReview = mReviews.get(mRvReviews.indexOfChild(view));
-
-        Toast.makeText(this, clickedBookReview.getLanguage().getName() + " " + clickedBookReview.getText().substring(0, 10), Toast.LENGTH_SHORT).show();
     }
 }

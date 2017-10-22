@@ -1,9 +1,8 @@
 package se.chalmers.bookreview.ui;
 
 import android.content.Intent;
-import android.support.v4.app.FragmentManager;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.Menu;
@@ -15,9 +14,9 @@ import java.util.ArrayList;
 
 import se.chalmers.bookreview.R;
 import se.chalmers.bookreview.adapter.BookAdapter;
+import se.chalmers.bookreview.model.Book;
 import se.chalmers.bookreview.net.Consts;
 import se.chalmers.bookreview.net.WebRequestManager;
-import se.chalmers.bookreview.model.Book;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
@@ -40,6 +39,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         mRvBooks.setLayoutManager(layoutManager);
 
         // Get books from server
+        getBooksFromServer();
+    }
+
+    private void getBooksFromServer() {
         WebRequestManager.getInstance().getAllBooks(Consts.SECTION_ID, new WebRequestManager.WebRequestHandler() {
             @Override
             public void onSuccess(Object data) {
@@ -69,6 +72,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         if (id == R.id.action_filter) {
             Toast.makeText(this, "Not implemented yet!", Toast.LENGTH_SHORT).show();
+
+            return true;
+        }
+
+        if (id == R.id.action_refresh) {
+            getBooksFromServer();
 
             return true;
         }
