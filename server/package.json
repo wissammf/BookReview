@@ -1,0 +1,19 @@
+{
+  "name": "mobile-computing-backend",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node index.js"
+  },
+  "author": "Oscar Rodriguez Villalobos",
+  "license": "ISC",
+  "dependencies": {
+    "bcrypt": "^1.0.3",
+    "express": "^4.16.2",
+    "fcm-push": "^1.1.3",
+    "jsonwebtoken": "^8.1.0",
+    "mysql": "^2.15.0"
+  }
+}
