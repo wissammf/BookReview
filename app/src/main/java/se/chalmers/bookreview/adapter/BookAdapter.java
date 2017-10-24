@@ -12,18 +12,22 @@ import android.widget.TextView;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 
 import se.chalmers.bookreview.R;
 import se.chalmers.bookreview.model.Book;
+import se.chalmers.bookreview.model.SortOption;
 
 public class BookAdapter extends RecyclerView.Adapter<BookAdapter.BookViewHolder> {
     private Context context;
     private ArrayList<Book> books;
     private View.OnClickListener onClickListener;
+    private SortOption sortOption;
 
     public BookAdapter(Context context, ArrayList<Book> books, View.OnClickListener onClickListener) {
         this.context = context;
-        this.books = books;
+        this.books = new ArrayList<>(books);
         this.onClickListener = onClickListener;
     }
 
@@ -32,6 +36,39 @@ public class BookAdapter extends RecyclerView.Adapter<BookAdapter.BookViewHolder
 
         this.books.clear();
         this.books.addAll(books);
+
+        notifyDataSetChanged();
+    }
+
+    public void applySort(SortOption sortOption) {
+        if (sortOption == this.sortOption) return;
+
+        switch (sortOption) {
+            case Default:
+                Collections.sort(books, new Comparator<Book>() {
+                    @Override
+                    public int compare(Book o1, Book o2) {
+                        return Integer.valueOf(o1.getId()).compareTo(o2.getId());
+                    }
+                });
+                break;
+            case Title:
+                Collections.sort(books, new Comparator<Book>() {
+                    @Override
+                    public int compare(Book o1, Book o2) {
+                        return o1.getTitle().compareTo(o2.getTitle());
+                    }
+                });
+                break;
+            case Rating:
+                Collections.sort(books, new Comparator<Book>() {
+                    @Override
+                    public int compare(Book o1, Book o2) {
+                        return Float.valueOf(o1.getRating()).compareTo(o2.getRating());
+                    }
+                });
+                break;
+        }
 
         notifyDataSetChanged();
     }

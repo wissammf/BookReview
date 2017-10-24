@@ -11,4 +11,8 @@
     <string name="btn_cancel">Cancel</string>
     <string name="action_refresh_book_reviews">se.chalmers.bookreview.action_refresh_book_reviews</string>
     <string name="action_refresh">Refresh</string>
+    <string name="dialog_title_sort_option">Select sort option</string>
+    <string name="sort_option_default">Default Order</string>
+    <string name="sort_order_title">Book Title</string>
+    <string name="sort_order_rating">Book Rating</string>
 </resources>
