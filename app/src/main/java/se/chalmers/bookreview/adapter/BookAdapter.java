@@ -14,6 +14,7 @@ import com.squareup.picasso.Picasso;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Objects;
 
 import se.chalmers.bookreview.R;
 import se.chalmers.bookreview.model.Book;
@@ -22,13 +23,18 @@ import se.chalmers.bookreview.model.SortOption;
 public class BookAdapter extends RecyclerView.Adapter<BookAdapter.BookViewHolder> {
     private Context context;
     private ArrayList<Book> books;
+    private ArrayList<Book> filteredBooks;
     private View.OnClickListener onClickListener;
     private SortOption sortOption;
+    private String query;
 
     public BookAdapter(Context context, ArrayList<Book> books, View.OnClickListener onClickListener) {
         this.context = context;
         this.books = new ArrayList<>(books);
+        this.filteredBooks = new ArrayList<>(books);
         this.onClickListener = onClickListener;
+
+        this.sortOption = SortOption.Default;
     }
 
     public void updateData(ArrayList<Book> books) {
@@ -37,15 +43,20 @@ public class BookAdapter extends RecyclerView.Adapter<BookAdapter.BookViewHolder
         this.books.clear();
         this.books.addAll(books);
 
+        applySearch(this.query);
+        applySort(this.sortOption);
+
         notifyDataSetChanged();
     }
 
     public void applySort(SortOption sortOption) {
         if (sortOption == this.sortOption) return;
 
+        this.sortOption = sortOption;
+
         switch (sortOption) {
             case Default:
-                Collections.sort(books, new Comparator<Book>() {
+                Collections.sort(filteredBooks, new Comparator<Book>() {
                     @Override
                     public int compare(Book o1, Book o2) {
                         return Integer.valueOf(o1.getId()).compareTo(o2.getId());
@@ -53,7 +64,7 @@ public class BookAdapter extends RecyclerView.Adapter<BookAdapter.BookViewHolder
                 });
                 break;
             case Title:
-                Collections.sort(books, new Comparator<Book>() {
+                Collections.sort(filteredBooks, new Comparator<Book>() {
                     @Override
                     public int compare(Book o1, Book o2) {
                         return o1.getTitle().compareTo(o2.getTitle());
@@ -61,13 +72,36 @@ public class BookAdapter extends RecyclerView.Adapter<BookAdapter.BookViewHolder
                 });
                 break;
             case Rating:
-                Collections.sort(books, new Comparator<Book>() {
+                Collections.sort(filteredBooks, new Comparator<Book>() {
                     @Override
                     public int compare(Book o1, Book o2) {
-                        return Float.valueOf(o1.getRating()).compareTo(o2.getRating());
+                        return Float.valueOf(o2.getRating()).compareTo(o1.getRating());
                     }
                 });
                 break;
+        }
+
+        notifyDataSetChanged();
+    }
+
+    public void applySearch(String query) {
+        this.query = query;
+
+        this.filteredBooks.clear();
+
+        if (query == null || query.isEmpty()) {
+            this.filteredBooks.addAll(books);
+        } else {
+            query = query.toLowerCase();
+            for (Book book : books) {
+                if (book.getTitle() != null && book.getTitle().toLowerCase().contains(query)) {
+                    this.filteredBooks.add(book);
+                    continue;
+                }
+                if (book.getDescription() != null && book.getDescription().toLowerCase().contains(query)) {
+                    this.filteredBooks.add(book);
+                }
+            }
         }
 
         notifyDataSetChanged();
@@ -85,21 +119,21 @@ public class BookAdapter extends RecyclerView.Adapter<BookAdapter.BookViewHolder
 
     @Override
     public void onBindViewHolder(BookViewHolder holder, int position) {
-        Book book = books.get(position);
+        Book book = filteredBooks.get(position);
         holder.setupView(book.getCoverImageUrl(), book.getTitle(), book.getRating());
     }
 
     @Override
     public int getItemCount() {
-        return books.size();
+        return filteredBooks.size();
     }
 
-    public class BookViewHolder extends RecyclerView.ViewHolder {
+    class BookViewHolder extends RecyclerView.ViewHolder {
         private ImageView ivCover;
         private TextView tvTitle;
         private RatingBar rbAverageRating;
 
-        public BookViewHolder(View itemView) {
+        BookViewHolder(View itemView) {
             super(itemView);
 
             ivCover = itemView.findViewById(R.id.iv_cover);
@@ -107,7 +141,7 @@ public class BookAdapter extends RecyclerView.Adapter<BookAdapter.BookViewHolder
             rbAverageRating = itemView.findViewById(R.id.rb_average_rating);
         }
 
-        public void setupView(String coverImageUrl, String title, float rating) {
+        void setupView(String coverImageUrl, String title, float rating) {
             Picasso.with(context)
                     .load(coverImageUrl)
                     .placeholder(R.drawable.book_cover_placeholder)

@@ -15,4 +15,5 @@
     <string name="sort_option_default">Default Order</string>
     <string name="sort_order_title">Book Title</string>
     <string name="sort_order_rating">Book Rating</string>
+    <string name="search_widget_title">Search</string>
 </resources>

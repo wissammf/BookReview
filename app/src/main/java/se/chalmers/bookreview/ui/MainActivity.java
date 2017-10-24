@@ -22,11 +22,14 @@ import se.chalmers.bookreview.model.SortOption;
 import se.chalmers.bookreview.net.Consts;
 import se.chalmers.bookreview.net.WebRequestManager;
 
+import android.support.v7.widget.SearchView;
+
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
     private RecyclerView mRvBooks;
     private BookAdapter mAdapter;
     private ArrayList<Book> mBooks;
+    private SearchView mSearchView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,6 +70,23 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_main, menu);
+
+        final MenuItem myActionMenuItem = menu.findItem(R.id.action_search);
+        mSearchView = (SearchView) myActionMenuItem.getActionView();
+        mSearchView.setIconifiedByDefault(false);
+        mSearchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String s) {
+                mAdapter.applySearch(s);
+                return false;
+            }
+        });
+
         return true;
     }
 
