@@ -5,6 +5,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
@@ -73,6 +75,16 @@ public class BookDetailsActivity extends AppCompatActivity implements View.OnCli
         RatingBar rbAverageRating = (RatingBar) findViewById(R.id.rb_average_rating);
         mRvReviews = (RecyclerView) findViewById(R.id.rv_reviews);
 
+        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                FragmentManager fm = getSupportFragmentManager();
+                mDialogFragment = AddReviewDialogFragment.newInstance(mBook.getId(), mBook.getTitle());
+                mDialogFragment.show(fm, "tag");
+            }
+        });
+
         // Get book from intent
         Intent intent = getIntent();
         mBook = (Book) intent.getSerializableExtra(getString(R.string.key_book));
@@ -132,26 +144,11 @@ public class BookDetailsActivity extends AppCompatActivity implements View.OnCli
     }
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_book_details, menu);
-        return true;
-    }
-
-    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
 
         if (id == android.R.id.home) {
             finish();
-
-            return true;
-        }
-
-        if (id == R.id.action_add_review) {
-            FragmentManager fm = getSupportFragmentManager();
-            mDialogFragment = AddReviewDialogFragment.newInstance(mBook.getId(), mBook.getTitle());
-            mDialogFragment.show(fm, "tag");
 
             return true;
         }

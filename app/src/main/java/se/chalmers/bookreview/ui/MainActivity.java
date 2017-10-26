@@ -98,7 +98,7 @@ public class MainActivity extends AppCompatActivity implements BookAdapter.OnIte
 
         if (id == R.id.action_filter) {
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
-            builder.setIcon(R.drawable.sort);
+            builder.setIcon(R.drawable.ic_sort);
             builder.setTitle(R.string.dialog_title_sort_option);
 
             final ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(this, android.R.layout.select_dialog_item);
