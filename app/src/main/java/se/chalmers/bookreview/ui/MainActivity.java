@@ -7,11 +7,13 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.SearchView;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Toast;
+
+import com.muller.snappingsample.SnappingRecyclerView;
 
 import java.util.ArrayList;
 
@@ -22,11 +24,9 @@ import se.chalmers.bookreview.model.SortOption;
 import se.chalmers.bookreview.net.Consts;
 import se.chalmers.bookreview.net.WebRequestManager;
 
-import android.support.v7.widget.SearchView;
+public class MainActivity extends AppCompatActivity implements BookAdapter.OnItemClickListener {
 
-public class MainActivity extends AppCompatActivity implements View.OnClickListener {
-
-    private RecyclerView mRvBooks;
+    private SnappingRecyclerView mRvBooks;
     private BookAdapter mAdapter;
     private ArrayList<Book> mBooks;
     private SearchView mSearchView;
@@ -36,7 +36,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        mRvBooks = (RecyclerView) findViewById(R.id.rv_books);
+        mRvBooks = (SnappingRecyclerView) findViewById(R.id.rv_books);
 
         mBooks = new ArrayList<>();
 
@@ -44,6 +44,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
         mRvBooks.setAdapter(mAdapter);
         mRvBooks.setLayoutManager(layoutManager);
+        mRvBooks.addItemDecoration(new SpacesItemDecoration((int) getResources().getDimension(R.dimen.book_list_space)));
+        mRvBooks.enableViewScaling(true);
 
         // Get books from server
         getBooksFromServer();
@@ -142,11 +144,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     @Override
-    public void onClick(View view) {
-        Book clickedBook = mBooks.get(mRvBooks.indexOfChild(view));
-
+    public void onItemClick(Book book) {
         Intent intent = new Intent(this, BookDetailsActivity.class);
-        intent.putExtra(getString(R.string.key_book), clickedBook);
+        intent.putExtra(getString(R.string.key_book), book);
         startActivity(intent);
     }
 }

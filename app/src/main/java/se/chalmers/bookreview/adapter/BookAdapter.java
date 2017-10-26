@@ -14,25 +14,28 @@ import com.squareup.picasso.Picasso;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.Objects;
 
 import se.chalmers.bookreview.R;
 import se.chalmers.bookreview.model.Book;
 import se.chalmers.bookreview.model.SortOption;
 
 public class BookAdapter extends RecyclerView.Adapter<BookAdapter.BookViewHolder> {
+    public interface OnItemClickListener {
+        void onItemClick(Book book);
+    }
+
     private Context context;
     private ArrayList<Book> books;
     private ArrayList<Book> filteredBooks;
-    private View.OnClickListener onClickListener;
+    private OnItemClickListener onItemClickListener;
     private SortOption sortOption;
     private String query;
 
-    public BookAdapter(Context context, ArrayList<Book> books, View.OnClickListener onClickListener) {
+    public BookAdapter(Context context, ArrayList<Book> books, OnItemClickListener onItemClickListener) {
         this.context = context;
         this.books = new ArrayList<>(books);
         this.filteredBooks = new ArrayList<>(books);
-        this.onClickListener = onClickListener;
+        this.onItemClickListener = onItemClickListener;
 
         this.sortOption = SortOption.Default;
     }
@@ -112,15 +115,13 @@ public class BookAdapter extends RecyclerView.Adapter<BookAdapter.BookViewHolder
         View itemView = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.item_book, parent, false);
 
-        itemView.setOnClickListener(onClickListener);
-
         return new BookViewHolder(itemView);
     }
 
     @Override
     public void onBindViewHolder(BookViewHolder holder, int position) {
         Book book = filteredBooks.get(position);
-        holder.setupView(book.getCoverImageUrl(), book.getTitle(), book.getRating());
+        holder.setupView(book, onItemClickListener);
     }
 
     @Override
@@ -141,14 +142,20 @@ public class BookAdapter extends RecyclerView.Adapter<BookAdapter.BookViewHolder
             rbAverageRating = itemView.findViewById(R.id.rb_average_rating);
         }
 
-        void setupView(String coverImageUrl, String title, float rating) {
+        void setupView(final Book book, final OnItemClickListener onItemClickListener) {
             Picasso.with(context)
-                    .load(coverImageUrl)
+                    .load(book.getCoverImageUrl())
                     .placeholder(R.drawable.book_cover_placeholder)
                     .error(R.drawable.book_cover_unavailable)
                     .into(ivCover);
-            tvTitle.setText(title);
-            rbAverageRating.setRating(rating);
+            tvTitle.setText(book.getTitle());
+            rbAverageRating.setRating(book.getRating());
+
+            itemView.setOnClickListener(new View.OnClickListener() {
+                @Override public void onClick(View v) {
+                    onItemClickListener.onItemClick(book);
+                }
+            });
         }
     }
 }

@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     tools:context="se.chalmers.bookreview.ui.MainActivity">
 
-    <android.support.v7.widget.RecyclerView
+    <com.muller.snappingsample.SnappingRecyclerView
         android:id="@+id/rv_books"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
