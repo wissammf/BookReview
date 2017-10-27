@@ -134,12 +134,6 @@ public class MainActivity extends AppCompatActivity implements BookAdapter.OnIte
             return true;
         }
 
-        if (id == R.id.action_refresh) {
-            getBooksFromServer();
-
-            return true;
-        }
-
         return super.onOptionsItemSelected(item);
     }
 

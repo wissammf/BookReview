@@ -61,7 +61,7 @@ public class WebRequestManager {
                                 book.setCoverImageUrl(bookObject.getString("cover_src"));
                                 book.setRating((float) bookObject.getDouble("rate"));
                                 book.setIsbn(bookObject.getString("isbn"));
-                                //book.setDescription(bookObject.getString("description"));
+                                book.setDescription(bookObject.getString("description"));
 
                                 books.add(book);
                             }
